@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <style>
+    body {
+      width: 1000px;
+      margin: 50px auto;
+      font-family: Palatino, serif;
+      background-color: #dbd4c2;
+      color: #555050;
+    }
+    h2 {
+      margin-top: 2em;
+      font-family: Arial, sans-serif;
+      font-weight: 100;
+    }
+  </style>
+</head>
+<body>
+<h1>Tweet Archive</h1>
+<% TAGS.each do |tag| %>
+  <a href="/?tag=<%= URI::encode(tag) %>"><%= tag %></a>
+<% end %>
+<% @tweets.each do |tweet| %>
+  <h2><%= tweet['text'] %></h2>
+  <p>
+    <a href="http://twitter.com/<%= tweet['user']['screen_name'] %>">
+      <%= tweet['user']['screen_name'] %>
+    </a>
+    on <%= tweet['created_at'] %>
+  </p>
+  <img src="<%= tweet['user']['profile_image_url'] %>" width="48" />
+<% end %>
+</body>
+</html>
+

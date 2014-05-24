@@ -1,0 +1,53 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.3.6)
+    atomic (1.1.16)
+    bson (1.9.2)
+    bson_ext (1.9.2)
+      bson (~> 1.9.2)
+    buftok (0.2.0)
+    equalizer (0.0.9)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
+    http (0.5.0)
+      http_parser.rb
+    http_parser.rb (0.6.0)
+    json (1.8.1)
+    memoizable (0.4.2)
+      thread_safe (~> 0.3, >= 0.3.1)
+    mongo (1.9.2)
+      bson (~> 1.9.2)
+    multipart-post (2.0.0)
+    naught (1.0.0)
+    rack (1.5.2)
+    rack-protection (1.5.2)
+      rack
+    simple_oauth (0.2.0)
+    sinatra (1.4.4)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (~> 1.3, >= 1.3.4)
+    thread_safe (0.3.1)
+      atomic (>= 1.1.7, < 2)
+    tilt (1.4.1)
+    twitter (5.8.0)
+      addressable (~> 2.3)
+      buftok (~> 0.2.0)
+      equalizer (~> 0.0.9)
+      faraday (~> 0.9.0)
+      http (~> 0.5.0)
+      http_parser.rb (~> 0.6.0)
+      json (~> 1.8)
+      memoizable (~> 0.4.0)
+      naught (~> 1.0)
+      simple_oauth (~> 0.2.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bson_ext (= 1.9.2)
+  mongo (= 1.9.2)
+  sinatra (= 1.4.4)
+  twitter (= 5.8.0)

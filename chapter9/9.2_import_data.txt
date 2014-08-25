@@ -1,0 +1,2 @@
+
+mongoimport --db catalog --collection books --type json --drop  --file catalog.books.json

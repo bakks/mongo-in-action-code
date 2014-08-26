@@ -45,6 +45,86 @@ db.users.aggregate([
 //     */
 
 // 6.3.2 $match, $sort, $skip, $limit
+
+// 6.3.2 $match, $sort, $skip, $limit
+
+// based on the example from from chapter 5.1.1
+// PAGINATING YOUR PRODUCT REVIEWS WITH SKIP, LIMIT AND SORT
+page_number = 1
+product = db.products.findOne({'slug': 'wheel-barrow-9092'})
+
+reviews = db.reviews.find({'product_id': product['_id']}).
+                     skip((page_number - 1) * 12).
+                     limit(12).
+                     sort({'helpful_votes': -1})
+
+/* expected output
+
+> reviews = db.reviews.find({'product_id': product['_id']}).
+...                      skip((page_number - 1) * 12).
+...                      limit(12).
+...                      sort({'helpful_votes': -1})
+{ "_id" : ObjectId("4c4b1476238d3b4dd5000045"), "product_id" : ObjectId("4c4b1476238d3b4dd5003981"), "user_id" : ObjectId("4c4b1476238d3b4dd5000003"), "rating" : 4, "helpful_votes" : 10 }
+{ "_id" : ObjectId("4c4b1476238d3b4dd5000043"), "product_id" : ObjectId("4c4b1476238d3b4dd5003981"), "user_id" : ObjectId("4c4b1476238d3b4dd5000002"), "rating" : 5, "helpful_votes" : 7 }
+{ "_id" : ObjectId("4c4b1476238d3b4dd5000041"), "product_id" : ObjectId("4c4b1476238d3b4dd5003981"), "date" : ISODate("2010-06-07T07:00:00Z"), "title" : "Amazing", "text" : "Has a squeaky wheel, but still a darn good wheel barrow.", "rating" : 4, "user_id" : ObjectId("4c4b1476238d3b4dd5000001"), "username" : "dgreenthumb", "helpful_votes" : 3, "voter_ids" : [ ObjectId("4c4b1476238d3b4dd5000041"), ObjectId("7a4f0376238d3b4dd5000003"), ObjectId("92c21476238d3b4dd5000032") ] }
+
+*/
+         
+                     
+// same thing in aggregation framework
+
+reviews2 = db.reviews.aggregate([
+    {$match: {'product_id': product['_id']}},
+    {$skip : (page_number - 1) * 12},
+    {$limit: 12},
+    {$sort:  {'helpful_votes': -1}}
+]).toArray();
+
+/* expected output
+
+> reviews2 = db.reviews.aggregate([
+...     {$match: {'product_id': product['_id']}},
+... {$skip : (page_number - 1) * 12},
+... {$limit: 12},
+... {$sort:  {'helpful_votes': -1}}
+... ]).toArray();
+[
+        {
+                "_id" : ObjectId("4c4b1476238d3b4dd5000045"),
+                "product_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "user_id" : ObjectId("4c4b1476238d3b4dd5000003"),
+                "rating" : 4,
+                "helpful_votes" : 10
+        },
+        {
+                "_id" : ObjectId("4c4b1476238d3b4dd5000043"),
+                "product_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "user_id" : ObjectId("4c4b1476238d3b4dd5000002"),
+                "rating" : 5,
+                "helpful_votes" : 7
+        },
+        {
+                "_id" : ObjectId("4c4b1476238d3b4dd5000041"),
+                "product_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "date" : ISODate("2010-06-07T07:00:00Z"),
+                "title" : "Amazing",
+                "text" : "Has a squeaky wheel, but still a darn good wheel barrow.",
+                "rating" : 4,
+                "user_id" : ObjectId("4c4b1476238d3b4dd5000001"),
+                "username" : "dgreenthumb",
+                "helpful_votes" : 3,
+                "voter_ids" : [
+                        ObjectId("4c4b1476238d3b4dd5000041"),
+                        ObjectId("7a4f0376238d3b4dd5000003"),
+                        ObjectId("92c21476238d3b4dd5000032")
+                ]
+        }
+]
+
+*/
+
+
+
 // also need these, but not shown in text
 upperManhattanOrders = {'shipping_address.zip': {$gte: 10019, $lt: 10040}};
 
@@ -93,6 +173,91 @@ db.products.aggregate([
 //     */
 
 // 6.3.4 $group
+db.orders.aggregate([
+    {$project: {user_id:1, line_items:1}},
+    {$unwind: '$line_items'},
+    {$group: {_id: {user_id:'$user_id'}, purchasedItems: {$push: '$line_items'}}}
+]).toArray();
+
+/* expected results
+[
+    {
+        "_id" : {
+            "user_id" : ObjectId("4c4b1476238d3b4dd5000002")
+        },
+        "purchasedItems" : [
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            }
+        ]
+    },
+    {
+        "_id" : {
+            "user_id" : ObjectId("4c4b1476238d3b4dd5000001")
+        },
+        "purchasedItems" : [
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "10027",
+                "name" : "Rubberized Work Glove, Black",
+                "quantity" : 2,
+                "pricing" : {
+                    "retail" : 1499,
+                    "sale" : 1299
+                }
+            }
+        ]
+    }
+]
+
+*/
 
 db.orders.aggregate([
     {"$match": {"purchase_data":

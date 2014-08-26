@@ -5,7 +5,7 @@
 // predefine variables
 var page_number = 1
 
-// code shown in  chapter
+// code shown in  chapter 5
 product  = db.products.findOne({'slug': 'wheel-barrow-9092'})
 category = db.categories.findOne({'_id': product['main_cat_id']})
 reviews_count = db.reviews.count({'product_id': product['_id']})
@@ -14,14 +14,37 @@ reviews = db.reviews.find({'product_id': product['_id']}).
     limit(12).
     sort({'helpful_votes': -1})
 
+// From chapter 5 - version 2 - reduced amount of code
+product  = db.products.findOne({'slug': 'wheel-barrow-9092'})
+reviews_count = db.reviews.count({'product_id': product['_id']})
 
-// rating summary
+// start with summary for all products
+ratingSummary = db.reviews.aggregate([     
+ {$group : { _id:'$product_id',
+             count:{$sum:1} }} 
+]).next(); 
 
-ratingSummary  = db.reviews.aggregate([
-    {$match : {'product_id': product['_id']}},
-    {$group : { _id:'$product_id',
-        average:{$avg:'$rating'} }}
-]).next();
+/* Result
+
+> ratingSummary = db.reviews.aggregate([
+...  {$group : { _id:'$product_id',
+...              count:{$sum:1} }}
+... ]);
+{ "_id" : ObjectId("4c4b1476238d3b4dd5003982"), "count" : 2 }
+{ "_id" : ObjectId("4c4b1476238d3b4dd5003981"), "count" : 3 }
+
+*/
+
+
+// rating summary - for selected product
+// look up product first
+product  = db.products.findOne({'slug': 'wheel-barrow-9092'})
+
+ratingSummary = db.reviews.aggregate([ 
+ {$match : { product_id: product['_id']} }, 
+ {$group : { _id:'$product_id',
+             count:{$sum:1} }} 
+]).next(); 
 
 ///*  Results
 //
@@ -32,7 +55,7 @@ ratingSummary  = db.reviews.aggregate([
 //
 // */
 
-// Adding total review count
+// Adding average review 
 
 ratingSummary  = db.reviews.aggregate([
     {$match : {'product_id': product['_id']}},
@@ -181,8 +204,34 @@ db.countsByCategory.findOne()
 // > db.countsByCategory.findOne()
 // { "_id" : ObjectId("6a5b1476238d3b4dd5000049"), "count" : 2 }
 
+// 
+
+// $out and $project section
+
+db.products.aggregate([
+    {$group : { _id:'$main_cat_id',
+                count:{$sum:1}}}, 
+    {$out : 'mainCategorySummary'}
+]);
 
 
+db.products.aggregate([
+    {$project : {category_ids:1}}
+]);
+
+/* Expected output
+
+> db.products.aggregate([
+... {$project : {category_ids:1}}
+... ]);
+{ "_id" : ObjectId("4c4b1476238d3b4dd5003981"), 
+  "category_ids" : [ ObjectId("6a5b1476238d3b4dd5000048"), 
+                     ObjectId("6a5b1476238d3b4dd5000049") ] }
+{ "_id" : ObjectId("4c4b1476238d3b4dd5003982"), 
+  "category_ids" : [ ObjectId("6a5b1476238d3b4dd5000048"), 
+                     ObjectId("6a5b1476238d3b4dd5000049") ] }
+
+*/
 // 6.2.2 User and Order
 db.reviews.aggregate([
     {$group :
@@ -232,7 +281,6 @@ sumByUserId = {_id: '$user_id',
 orderTotalLarge = {total: {$gt:10000}};
 
 sortTotalDesc = {total: -1};
-
 
 db.orders.aggregate([
     {$match: upperManhattanOrders},

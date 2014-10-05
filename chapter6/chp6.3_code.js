@@ -44,9 +44,113 @@ db.users.aggregate([
 //
 //     */
 
-// 6.3.2 $match, $sort, $skip, $limit
+// 6.3.2 $group
+db.orders.aggregate([
+    {$project: {user_id:1, line_items:1}},
+    {$unwind: '$line_items'},
+    {$group: {_id: {user_id:'$user_id'}, purchasedItems: {$push: '$line_items'}}}
+]).toArray();
 
-// 6.3.2 $match, $sort, $skip, $limit
+/* expected results
+[
+    {
+        "_id" : {
+            "user_id" : ObjectId("4c4b1476238d3b4dd5000002")
+        },
+        "purchasedItems" : [
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            }
+        ]
+    },
+    {
+        "_id" : {
+            "user_id" : ObjectId("4c4b1476238d3b4dd5000001")
+        },
+        "purchasedItems" : [
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "9092",
+                "name" : "Extra Large Wheel Barrow",
+                "quantity" : 1,
+                "pricing" : {
+                    "retail" : 5897,
+                    "sale" : 4897
+                }
+            },
+            {
+                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+                "sku" : "10027",
+                "name" : "Rubberized Work Glove, Black",
+                "quantity" : 2,
+                "pricing" : {
+                    "retail" : 1499,
+                    "sale" : 1299
+                }
+            }
+        ]
+    }
+]
+
+*/
+
+db.orders.aggregate([
+    {"$match": {"purchase_data":
+    {"$gte" : new Date(2010, 0, 1)}}},
+    {"$group": {
+        "_id": {"year" : {"$year" :"$purchase_data"},
+            "month" : {"$month" : "$purchase_data"}},
+        "count": {"$sum":1},
+        "total": {"$sum":"$sub_total"}}},
+    {"$sort": {"_id":-1}}
+]);
+
+//    /* expected results
+//
+//     { "_id" : { "year" : 2014, "month" : 11 }, "count" : 1, "total" : 4897 }
+//     { "_id" : { "year" : 2014, "month" : 8 }, "count" : 2, "total" : 11093 }
+//     { "_id" : { "year" : 2014, "month" : 4 }, "count" : 1, "total" : 4897 }
+//
+//     */
+
+// 6.3.3 $match, $sort, $skip, $limit
 
 // based on the example from from chapter 5.1.1
 // PAGINATING YOUR PRODUCT REVIEWS WITH SKIP, LIMIT AND SORT
@@ -158,7 +262,7 @@ db.orders.aggregate([
 //
 //     */
 
-// 6.3.3 $unwind
+// 6.3.4 $unwind
 db.products.aggregate([
     {$project : {category_ids:1}},
     {$unwind : '$category_ids'},
@@ -172,111 +276,6 @@ db.products.aggregate([
 //
 //     */
 
-// 6.3.4 $group
-db.orders.aggregate([
-    {$project: {user_id:1, line_items:1}},
-    {$unwind: '$line_items'},
-    {$group: {_id: {user_id:'$user_id'}, purchasedItems: {$push: '$line_items'}}}
-]).toArray();
-
-/* expected results
-[
-    {
-        "_id" : {
-            "user_id" : ObjectId("4c4b1476238d3b4dd5000002")
-        },
-        "purchasedItems" : [
-            {
-                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
-                "sku" : "9092",
-                "name" : "Extra Large Wheel Barrow",
-                "quantity" : 1,
-                "pricing" : {
-                    "retail" : 5897,
-                    "sale" : 4897
-                }
-            },
-            {
-                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
-                "sku" : "9092",
-                "name" : "Extra Large Wheel Barrow",
-                "quantity" : 1,
-                "pricing" : {
-                    "retail" : 5897,
-                    "sale" : 4897
-                }
-            },
-            {
-                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
-                "sku" : "9092",
-                "name" : "Extra Large Wheel Barrow",
-                "quantity" : 1,
-                "pricing" : {
-                    "retail" : 5897,
-                    "sale" : 4897
-                }
-            },
-            {
-                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
-                "sku" : "9092",
-                "name" : "Extra Large Wheel Barrow",
-                "quantity" : 1,
-                "pricing" : {
-                    "retail" : 5897,
-                    "sale" : 4897
-                }
-            }
-        ]
-    },
-    {
-        "_id" : {
-            "user_id" : ObjectId("4c4b1476238d3b4dd5000001")
-        },
-        "purchasedItems" : [
-            {
-                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
-                "sku" : "9092",
-                "name" : "Extra Large Wheel Barrow",
-                "quantity" : 1,
-                "pricing" : {
-                    "retail" : 5897,
-                    "sale" : 4897
-                }
-            },
-            {
-                "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
-                "sku" : "10027",
-                "name" : "Rubberized Work Glove, Black",
-                "quantity" : 2,
-                "pricing" : {
-                    "retail" : 1499,
-                    "sale" : 1299
-                }
-            }
-        ]
-    }
-]
-
-*/
-
-db.orders.aggregate([
-    {"$match": {"purchase_data":
-    {"$gte" : new Date(2010, 0, 1)}}},
-    {"$group": {
-        "_id": {"year" : {"$year" :"$purchase_data"},
-            "month" : {"$month" : "$purchase_data"}},
-        "count": {"$sum":1},
-        "total": {"$sum":"$sub_total"}}},
-    {"$sort": {"_id":-1}}
-]);
-
-//    /* expected results
-//
-//     { "_id" : { "year" : 2014, "month" : 11 }, "count" : 1, "total" : 4897 }
-//     { "_id" : { "year" : 2014, "month" : 8 }, "count" : 2, "total" : 11093 }
-//     { "_id" : { "year" : 2014, "month" : 4 }, "count" : 1, "total" : 4897 }
-//
-//     */
 
 // 6.3.5 $out
 

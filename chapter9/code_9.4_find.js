@@ -1,3 +1,12 @@
+// super simple search - case insensitive, searches all text fields (v2)
+db.books.find({$text: {$search: 'actions'}},{title:1})
+
+{ "_id" : 755, "title" : "MongoDB in Action, Second Edition" }
+{ "_id" : 17, "title" : "MongoDB in Action" }
+
+
+
+// OR flavor search - plus stop words
 db.books.find({$text: {$search: 'MongoDB in Action'}},{title:1})
 
 // results:
@@ -7,6 +16,76 @@ db.books.find({$text: {$search: 'MongoDB in Action'}},{title:1})
 //    { "_id" : 233, "title" : "PostGIS in Action" }
 //    { "_id" : 17, "title" : "MongoDB in Action" }
 
+
+//**********************************************************************
+//          9.4.1 - complex searches - same as later section but without text scores
+//**********************************************************************
+
+
+db.books.
+    find({$text: {$search: ' "mongodb" in action'}},           //A
+    {_id:0, title:1})
+
+/*  RESULTS
+
+{ "title" : "MongoDB in Action" }
+{ "title" : "MongoDB in Action, Second Edition" }
+
+*/
+
+
+db.books.
+    find({$text: {$search: ' "mongodb" "second edition" '}},           //A
+    {_id:0, title:1})
+
+
+db.books.
+    find({$text: {$search: ' books '}}).
+    count()
+
+db.books.
+    find({$text: {$search: ' "books" '}}).
+    count()
+
+
+db.books.
+    find({$text: {$search: ' "book" '}}).
+    count()
+
+  // ******************   book alternative - developer
+  
+ 
+db.books.
+    find({$text: {$search: ' developers '}}).
+    count()
+
+db.books.
+    find({$text: {$search: ' "developers" '}}).
+    count()
+
+db.books.
+    find({$text: {$search: ' "developer" '}}).
+    count()  
+
+    
+ db.books.
+    find({$text: {$search: ' developing '}}).
+    count()  
+    
+    
+  // ********************************************************
+
+db.books.
+    find({$text: {$search: ' mongodb -second '}},           //A
+    {_id:0, title:1})
+
+db.books.
+    find({$text: {$search: ' mongodb -"second edition" '}},           //A
+    {_id:0, title:1})
+
+db.books.
+    find({$text: {$search: ' mongodb '}, status: 'MEAP' },           //A
+    {_id:0, title:1, status:1})
 
 // showing text search score for two different
 // search strings which are equivalent
@@ -62,7 +141,7 @@ db.books.
 
 
 //**********************************************************************
-//          9.4.3 - complex searches
+//           - complex searches WITH text scores
 //**********************************************************************
 
 

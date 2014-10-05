@@ -84,7 +84,56 @@ db.orders.aggregate([
 // na
 
 // 6.4.5 Set functions
-// na
+// given products: 
+{ "_id" : ObjectId("4c4b1476238d3b4dd5003981"), 
+  "productName" : "Extra Large Wheel Barrow",
+  "tags" : [ "tools", "gardening", "soil" ]}
+  
+{ "_id" : ObjectId("4c4b1476238d3b4dd5003982"),
+  "productName" : "Rubberized Work Glove, Black",
+  "tags" : [ "gardening" ]}
+
+  // and define tag
+  testSet1 = ['tools']
+  
+// a setUnion example as such
+  db.products.aggregate([
+    {$project: 
+        {productName: '$name', 
+         tags:1, 
+         setUnion: {$setUnion:['$tags',testSet1]},
+       }
+    }
+])
+
+// would produce
+{   "_id" : ObjectId("4c4b1476238d3b4dd5003981"),
+    "productName" : "Extra Large Wheel Barrow",
+    "tags" : ["tools", "gardening", "soil"],
+    "setUnion" : ["gardening","tools","soil"]
+}
+
+{   "_id" : ObjectId("4c4b1476238d3b4dd5003982"),
+    "productName" : "Rubberized Work Glove, Black",
+    "tags" : ["gardening"],
+    "setUnion" : ["tools", "gardening"]
+}
 
 // 6.4.6  Misc. functions
-// na
+db.orders.aggregate([
+    {$project: {
+        orderSummary: {
+            $map: {
+                input: '$line_items',
+                as: 'item',
+                in: {
+                    descr: {$concat: [
+                        {$substr:['$$item.quantity',0,10]},
+                        ' ', '$$item.name']},
+                    price: '$$item.pricing.sale'
+                }
+            }
+        }}
+    }, 
+    {$limit: 2}
+]).pretty()

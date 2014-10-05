@@ -9,7 +9,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) \
 require 'names'
 
 # Open a connection to MongoDB
-@con  = Mongo::MongoClient.new("localhost", 27017)
+@con  = Mongo::MongoClient.new("localhost", 40000)
 
 # Create a collection object for the "cloud-docs.spreadsheets" collection
 @col  = @con['cloud-docs']['spreadsheets']

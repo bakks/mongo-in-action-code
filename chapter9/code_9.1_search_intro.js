@@ -8,7 +8,7 @@ db.products.ensureIndex(
 db.products.find({$text: {$search: 'gardens'}},{_id:0, name:1,description:1,tags:1}).pretty()
 
 // result
-
+/*
 > db.products
     .find({$text: {$search: 'gardens'}},{_id:0, name:1,description:1,tags:1})
     .pretty()
@@ -29,5 +29,5 @@ db.products.find({$text: {$search: 'gardens'}},{_id:0, name:1,description:1,tags
         "soil"
     ]
 }
-
+*/
 

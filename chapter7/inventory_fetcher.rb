@@ -12,7 +12,7 @@ class InventoryFetcher
   def add_to_cart(order_id, *items)
     item_selectors = []
     items.each do |item|
-      item[:qty].times do
+      item[:quantity].times do
         item_selectors << {:sku => item[:sku]}
       end
     end

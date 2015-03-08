@@ -26,11 +26,11 @@ db.products.aggregate([
 // $literal
 // suppose we want to create field called useCount and set this to 0
 db.categories.aggregate([
-    {$project: {catgyName: '$name',
+    {$project: {categoryName: '$name',
         useCount: 0
     }
     },
-    {$out: 'catgyUseCount'}
+    {$out: 'categoryUseCount'}
 ])
 
 
@@ -56,34 +56,34 @@ db.categories.aggregate([
 db.categories.aggregate([
     {$project:
     {_id: 0,
-        catgyName: '$name',
+        categoryName: '$name',
         useCount: {$literal: 0}}   //1
     },
-    {$out: 'catgyUseCount'}
+    {$out: 'categoryUseCount'}
 ])
 
 //    /*  expected results
 //
-//     { "catgyName" : "Gardening Tools", "useCount" : 0 }
+//     { "categoryName" : "Gardening Tools", "useCount" : 0 }
 //
 //
 //     /*  what if
 //
 //     db.categories.aggregate([
 //     {$project:
-//     {catgyName: '$name',
+//     {categoryName: '$name',
 //     useCount: -2 }          //1
 //     },
-//     {$out: 'catgyUseCount'}
+//     {$out: 'categoryUseCount'}
 //
 //     ])
 //
 //     db.categories.aggregate([
 //     {$project:
-//     {catgyName: '$name',
+//     {categoryName: '$name',
 //     name: 0 }          //1
 //     },
-//     {$out: 'catgyUseCount'}
+//     {$out: 'categoryUseCount'}
 //     ])
 //
 //

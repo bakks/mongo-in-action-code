@@ -1,18 +1,6 @@
 
 // 6.2.1 Products, categories, reviews
 
-// from chapter 5.1
-// predefine variables
-var page_number = 1
-
-// code shown in  chapter 5
-product  = db.products.findOne({'slug': 'wheel-barrow-9092'})
-category = db.categories.findOne({'_id': product['main_cat_id']})
-reviews_count = db.reviews.count({'product_id': product['_id']})
-reviews = db.reviews.find({'product_id': product['_id']}).
-    skip((page_number - 1) * 12).
-    limit(12).
-    sort({'helpful_votes': -1})
 
 // From chapter 5 - version 2 - reduced amount of code
 product  = db.products.findOne({'slug': 'wheel-barrow-9092'})
@@ -298,7 +286,6 @@ db.orders.aggregate([
 //    /* results
 //
 //     { "_id" : ObjectId("4c4b1476238d3b4dd5000002"), "total" : 19588 }
-//     { "_id" : ObjectId("4c4b1476238d3b4dd5000001"), "total" : 6196 }
 //
 //     */
 
@@ -317,8 +304,6 @@ db.orders.aggregate([
 //    /* results
 //     { "_id" : ObjectId("4c4b1476238d3b4dd5000002"),
 //     "total" : 19588, "count" : 4 }
-//     { "_id" : ObjectId("4c4b1476238d3b4dd5000001"),
-//     "total" : 6196, "count" : 1 }
 //
 //     */
 

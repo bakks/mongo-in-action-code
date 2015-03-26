@@ -55,19 +55,19 @@ mkdir ./data/rs-b-3
 
 echo Starting all the mongod nodes in the Shard A replica set
 mongod --shardsvr --replSet shard-a --dbpath ./data/rs-a-1 --port 30000 \
-       --logpath ./data/rs-a-1.log --fork --nojournal
+       --logpath ./data/rs-a-1.log --fork
 mongod --shardsvr --replSet shard-a --dbpath ./data/rs-a-2 --port 30001 \
-       --logpath ./data/rs-a-2.log --fork --nojournal
+       --logpath ./data/rs-a-2.log --fork
 mongod --shardsvr --replSet shard-a --dbpath ./data/rs-a-3 --port 30002 \
-       --logpath ./data/rs-a-3.log --fork --nojournal
+       --logpath ./data/rs-a-3.log --fork
 
 echo Starting all the mongod nodes in the Shard B replica set
 mongod --shardsvr --replSet shard-b --dbpath ./data/rs-b-1 --port 30100 \
-       --logpath ./data/rs-b-1.log --fork --nojournal
+       --logpath ./data/rs-b-1.log --fork
 mongod --shardsvr --replSet shard-b --dbpath ./data/rs-b-2 --port 30101 \
-       --logpath ./data/rs-b-2.log --fork --nojournal
+       --logpath ./data/rs-b-2.log --fork
 mongod --shardsvr --replSet shard-b --dbpath ./data/rs-b-3 --port 30102 \
-       --logpath ./data/rs-b-3.log --fork --nojournal
+       --logpath ./data/rs-b-3.log --fork
 
 
 

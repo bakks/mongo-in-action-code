@@ -108,11 +108,11 @@ mkdir ./data/config-3
 
 echo Starting all the mongod config server nodes
 mongod --configsvr --dbpath ./data/config-1 --port 27019 \
-       --logpath ./data/config-1.log --fork --nojournal
+       --logpath ./data/config-1.log --fork
 mongod --configsvr --dbpath ./data/config-2 --port 27020 \
-       --logpath ./data/config-2.log --fork --nojournal
+       --logpath ./data/config-2.log --fork
 mongod --configsvr --dbpath ./data/config-3 --port 27021 \
-       --logpath ./data/config-3.log --fork --nojournal
+       --logpath ./data/config-3.log --fork
 echo Waiting for config servers to finish starting up
 sleep 60
 

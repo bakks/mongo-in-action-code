@@ -74,7 +74,7 @@ mongod --shardsvr --replSet shard-b --dbpath ./data/rs-b-3 --port 30102 \
 echo Initializing the Shard A replica set
 mongo $HOSTNAME:30000 --eval "printjson(rs.initiate())"
 echo Waiting for the initialization to complete
-sleep 10
+sleep 60
 echo Adding data node to replica set
 mongo $HOSTNAME:30000 --eval "printjson(rs.add(\"$HOSTNAME:30001\"))"
 echo Adding arbiter to replica set
@@ -83,7 +83,7 @@ mongo $HOSTNAME:30000 --eval "printjson(rs.addArb(\"$HOSTNAME:30002\"))"
 echo Initializing the Shard B replica set
 mongo $HOSTNAME:30100 --eval "printjson(rs.initiate())"
 echo Waiting for the initialization to complete
-sleep 10
+sleep 60
 echo Adding data node to replica set
 mongo $HOSTNAME:30100 --eval "printjson(rs.add(\"$HOSTNAME:30101\"))"
 echo Adding arbiter to replica set
@@ -114,7 +114,7 @@ mongod --configsvr --dbpath ./data/config-2 --port 27020 \
 mongod --configsvr --dbpath ./data/config-3 --port 27021 \
        --logpath ./data/config-3.log --fork --nojournal
 echo Waiting for config servers to finish starting up
-sleep 10
+sleep 60
 
 
 

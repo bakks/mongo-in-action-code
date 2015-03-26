@@ -141,10 +141,8 @@ echo
 
 
 echo Adding Shard A to the cluster
-#mongo $HOSTNAME:40000 \
-    #--eval "printjson(sh.addShard(\"shard-a/$HOSTNAME:30000,$HOSTNAME:30001\"))"
 mongo $HOSTNAME:40000 \
-    --eval "printjson(sh.addShard(\"shard-a/$HOSTNAME:30002\"))"
+    --eval "printjson(sh.addShard(\"shard-a/$HOSTNAME:30000,$HOSTNAME:30001\"))"
 
 echo Adding Shard B to the cluster
 mongo $HOSTNAME:40000 \

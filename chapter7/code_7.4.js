@@ -82,7 +82,7 @@ db.products.update({slug: 'hammer'}, {
 db.products.findOne({slug: 'hammer'})
 
 
-// ******* Array Update Paramters
+// ******* Array Update Parameters
 
 // $push, $pushAll, and $each
 db.products.insert({slug: 'shovel'})

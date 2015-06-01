@@ -1,0 +1,19 @@
+mkdir ~/mongo-migration
+cd ~/mongo-migration
+
+mongodump
+
+sudo service mongod stop
+ps ax | grep mongo
+
+sudo mv /data/db /data/db-mmapv1
+
+sudo mkdir /data/db
+sudo chown mongodb.mongodb /data/db
+sudo chmod 755 /data/db
+
+sudo service mongod start
+
+cd ~/mongo-migration
+mongorestore dump
+

@@ -1,0 +1,29 @@
+===== RUNNING mmapv1.conf =====
+Cleaning up data directory
+Starting up mongod... took 102 seconds
+Running import loop 16
+Insert performance for mmapv1.conf: 105 seconds
+Shutting down server... took 1 seconds
+Disk usage for mmapv1.conf: 4128.04MB
+===== RUNNING wiredtiger-uncompressed.conf =====
+Cleaning up data directory
+Starting up mongod... took 2 seconds
+Running import loop 16
+Insert performance for wiredtiger-uncompressed.conf: 92 seconds
+Shutting down server... took 3 seconds
+Disk usage for wiredtiger-uncompressed.conf: 560.56MB
+===== RUNNING wiredtiger-snappy.conf =====
+Cleaning up data directory
+Starting up mongod... took 1 seconds
+Running import loop 16
+Insert performance for wiredtiger-snappy.conf: 93 seconds
+Shutting down server... took 2 seconds
+Disk usage for wiredtiger-snappy.conf: 380.27MB
+===== RUNNING wiredtiger-zlib.conf =====
+Cleaning up data directory
+Starting up mongod... took 2 seconds
+Running import loop 16
+Insert performance for wiredtiger-zlib.conf: 104 seconds
+Shutting down server... took 3 seconds
+Disk usage for wiredtiger-zlib.conf: 326.67MB
+

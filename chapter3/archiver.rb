@@ -8,10 +8,10 @@ class TweetArchiver
 
   # Create a new instance of TweetArchiver
   def initialize(tag)
-    connection = Mongo::Connection.new(DATABASE_HOST, DATABASE_PORT)
-    db         = connection[DATABASE_NAME]
-    @tweets    = db[COLLECTION_NAME]
-    @tweets.ensure_index([['tags', 1], ['id', -1]])
+    print "#{DATABASE_HOST}:#{DATABASE_PORT}\n"
+    connection = Mongo::Client.new("mongodb://#{DATABASE_HOST}:#{DATABASE_PORT}/#{DATABASE_NAME}")
+    @tweets    = connection[COLLECTION_NAME]
+    @tweets.indexes.create_one({ tags: 1, id: -1 })
     @tag = tag
     @tweets_found = 0
 
@@ -40,7 +40,7 @@ class TweetArchiver
       tweet_doc = tweet.to_h
       tweet_doc[:tags] = term
       tweet_doc[:_id] = tweet_doc[:id]
-      @tweets.save(tweet_doc)
+      @tweets.insert_one(tweet_doc)
     end
   end
 end

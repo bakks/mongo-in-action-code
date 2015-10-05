@@ -1,0 +1,117 @@
+//***************** 10.2.1  ***********************
+
+## create three data directories in your home directory
+mkdir ~/node1
+mkdir ~/node2
+mkdir ~/arbiter
+
+## Best to run each command in separate terminal window! 
+mongod --replSet myapp --dbpath ~/node1 --port 40000
+mongod --replSet myapp --dbpath ~/node2 --port 40001
+mongod --replSet myapp --dbpath ~/arbiter --port 40002
+
+## connect to mongod then enter commands shown below!
+mongo --port 40000
+
+// enter below into mongo console just started with the "mongo --port 40000" command
+// start first replica (using the mongod I'm connected to on port 40000)
+rs.initiate()
+
+// add additional replica
+// NOTE: change the value "iron.local:40000" 
+// to the name given in startup response
+//         "me" : "{yourServerName}:40000",
+
+rs.add("iron.local:40001")
+// my machine specific comand:        rs.add("D830J:40001")
+
+// add arbiter
+rs.add("iron.local:40002", {arbiterOnly: true})
+// my machine specific command:       rs.add("D830J:40002", {arbiterOnly: true})
+
+// Check status 
+db.isMaster()
+
+
+// for more details
+rs.status()
+
+// ASSUMING you're still in the shell, 
+// and it should be the master
+// try the following test insert
+use bookstore
+db.books.insert({title: "Oliver Twist"})
+show dbs
+
+
+## OPEN ANOTHER TERMINAL WINDOW (should be the 5th now)
+## enter following command line to get into secondary mongod
+mongo --port 40001
+
+//  now from the console
+show dbs
+use bookstore 
+rs.slaveOk()
+db.books.find()
+
+## NOW - shut down the PRIMARY server...
+## Go to console window that shows the primary mongod, should show something like:
+mongo --port 40000
+
+// should see PRIMARY in the prompt!
+myapp:PRIMARY>
+
+// enter this:
+use admin  
+db.shutdownServer()
+
+# swap to terminal running the former "SECONDARY" 
+# or enter command below in a new terminal window
+mongo --port 40001
+
+// should now be the primary
+rs.status()
+
+//*************************  10.2.2  ********************************
+
+## OPTIONAL? Restart mongod on port 40000
+## In a new terminal window (or the one previously used for mongod --port 40000
+mongod --replSet myapp --dbpath ~/node1 --port 40000
+
+## in the mongo console, if not connected to one, use below
+## assuming 40001 is STILL the primary. If not, use 40000
+mongo --port 40001  
+
+// now in console 
+// make sure you see the prompt below
+
+myapp:PRIMARY>
+
+// then enter
+user local
+
+show collections
+
+db.oplog.rs.findOne({op: "i"})
+
+// NOTE: replace the Timestamp value with the one retured from the previous command
+// IF you want to see any results
+db.oplog.rs.findOne({ts: Timestamp(1383844267, 1)})
+
+// Add a few more books
+use bookstore
+db.books.insert({title: "A Tale of Two Cities"})
+db.books.insert({title: "Great Expectations"})
+
+db.books.update({}, {$set: {author: "Dickens"}}, {multi:true})
+
+// now look at oplog
+use local
+db.oplog.rs.find({op: "u"})
+
+// get repl info
+db.getReplicationInfo()
+
+// get the last oplog document
+db.oplog.rs.find().sort({$natural: -1}).limit(1)
+
